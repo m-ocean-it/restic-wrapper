@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"restic-wrapper/config"
-	"strings"
 )
 
 func main() {
@@ -73,8 +72,12 @@ func main() {
 func init_repo(url string) {
 	log.Println("initializing a repository")
 
-	cmd := fmt.Sprintf("restic -r s3:%s init",
-		url)
+	cmd := []string{
+		"restic",
+		"-r",
+		"s3:" + url,
+		"init",
+	}
 
 	_ = exec_command(cmd)
 
@@ -87,9 +90,14 @@ func init_repo(url string) {
 }
 
 func backup_paths(url string, paths ...string) error {
-	cmd := fmt.Sprintf("restic -r s3:%s --verbose backup %s",
-		url,
-		strings.Join(paths, " "))
+	cmd := []string{
+		"restic",
+		"-r",
+		"s3:" + url,
+		"--verbose",
+		"backup",
+	}
+	cmd = append(cmd, paths...)
 
 	err := exec_command(cmd)
 
@@ -98,20 +106,24 @@ func backup_paths(url string, paths ...string) error {
 
 func list_snapshots(url string) error {
 	fmt.Println("Listing snapshots:")
-	cmd := fmt.Sprintf("restic -r s3:%s snapshots", url)
+	cmd := []string{
+		"restic",
+		"-r",
+		"s3:" + url,
+		"snapshots",
+	}
 	err := exec_command(cmd)
 	return err
 }
 
-func exec_command(shell_form_cmd string) error {
-	log.Printf("executing shell command: %s\n", shell_form_cmd)
-
-	if len(shell_form_cmd) == 0 {
+func exec_command(cmd []string) error {
+	if len(cmd) == 0 {
 		return errors.New("empty string as input")
 	}
 
-	exec_form_cmd := strings.Fields(shell_form_cmd)
-	executable, args := exec_form_cmd[0], exec_form_cmd[1:]
+	log.Printf("executing shell command: %s\n", cmd)
+
+	executable, args := cmd[0], cmd[1:]
 
 	out, err := exec.Command(executable, args...).CombinedOutput()
 	log.Println("\n", string(out))
