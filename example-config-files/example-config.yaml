@@ -1,8 +1,8 @@
-SECRETS_FILE: "/home/username/.config/restic-wrapper.yaml"
+SECRETS_FILE: "/home/username/.config/restic-wrapper.yaml" # allowed empty
 
 ENDPOINT: storage.yandexcloud.net
 BUCKET: "some-bucket-name"
-BUCKET_DIR: "" # allowed enoty
+BUCKET_DIR: "" # allowed empty
 
 BACKUP_PATHS:
   - "/home/username/Desktop"

@@ -12,6 +12,7 @@ import (
 
 var CONFIG_PATH_ENV_VAR = "RESTIC_WRAPPER_CONFIG_PATH"
 var DEFAULT_CONFIG_PATH = "/etc/restic-wrapper/config.yaml"
+var DEFAULT_SECRETS_PATH = "/etc/restic-wrapper/secrets.yaml"
 
 type config struct {
 	SecretsFilePath string `yaml:"SECRETS_FILE"`
@@ -61,17 +62,20 @@ func (c config) Secrets() secrets.Secrets {
 	return secrets.Build(c.SecretsFilePath)
 }
 
-func (c config) validate() {
+func (c *config) validate() {
 	if len(c.BUCKET_DIR) == 0 {
 		log.Println("config: BUCKET_DIR empty, therefore using the bucket's root")
+	}
+
+	if len(c.SecretsFilePath) == 0 {
+		log.Printf("config: SECRETS_FILE empty, therefore using the default: %s\n",
+			DEFAULT_SECRETS_PATH)
+		c.SecretsFilePath = DEFAULT_SECRETS_PATH
 	}
 
 	{
 		err_msg := "config error"
 
-		if len(c.SecretsFilePath) == 0 {
-			log.Fatalf("%s: SECRETS_FILE empty\n", err_msg)
-		}
 		if len(c.ENDPOINT) == 0 {
 			log.Fatalf("%s: ENDPOINT empty\n", err_msg)
 		}
