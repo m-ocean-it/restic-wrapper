@@ -35,13 +35,17 @@ func main() {
 	}
 
 	secr := conf.Secrets()
-	err = os.Setenv("AWS_ACCESS_KEY_ID", secr.Aws.KeyId)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = os.Setenv("AWS_SECRET_ACCESS_KEY", secr.Aws.Key)
-	if err != nil {
-		log.Fatalln(err)
+	{
+		// Restic requires those environment variables for authenticating
+		// with an S3 storage-provider.
+		err = os.Setenv("AWS_ACCESS_KEY_ID", secr.Aws.KeyId)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		err = os.Setenv("AWS_SECRET_ACCESS_KEY", secr.Aws.Key)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 	err = os.Setenv("RESTIC_PASSWORD", secr.ResticPassword)
 	if err != nil {

@@ -1,6 +1,6 @@
 ## About
 
-This script allows backing up multiple paths (specified in a config file) at once using Restic.
+This script allows backing up multiple file paths (specified in a config file) at once to an S3-compatible storage using Restic.
 
 ## How to use
 
