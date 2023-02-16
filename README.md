@@ -9,5 +9,7 @@ Prepare `config.yaml` and `secrets.yaml`. (Examples are present in the repo.)
 Then run:
 ```bash
 restic-wrapper init  # should be run only once to prepare a remote repository
-restic-wrapper  # to create a new snapshot
+restic-wrapper backup  # to create a new snapshot
+restic-wrapper snapshots  # to list created snapshots
+restic-wrapper help  # to print help
 ```

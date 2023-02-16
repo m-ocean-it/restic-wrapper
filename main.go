@@ -16,12 +16,21 @@ func main() {
 	case 0:
 		panic("wtf") // first argument is always a name of the executable
 	case 1:
-		mode = "backup"
+		show_help()
+		return
 	case 2:
 		arg := os.Args[1]
-		if arg == "init" {
+		switch arg {
+		case "init":
 			mode = "init"
-		} else {
+		case "backup":
+			mode = "backup"
+		case "snapshots":
+			mode = "snapshots"
+		case "help":
+			show_help()
+			return
+		default:
 			log.Fatalf("unknown arg: %s\n", arg)
 		}
 	default:
@@ -61,7 +70,9 @@ func main() {
 		if err != nil {
 			log.Fatalln(err)
 		}
+		fmt.Println("You can use `restic-wrapper snapshots` to list snapshots")
 
+	case "snapshots":
 		err = list_snapshots(conf.Url())
 		if err != nil {
 			log.Fatal(err)
@@ -129,4 +140,8 @@ func exec_command(cmd []string) error {
 	log.Println("\n", string(out))
 
 	return err
+}
+
+func show_help() {
+	fmt.Println("Help is coming :)")
 }
