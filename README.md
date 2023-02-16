@@ -2,6 +2,12 @@
 
 This script allows backing up multiple file paths (specified in a config file) at once to an S3-compatible storage using Restic.
 
+## TODO
+- [ ] Allow working with multiple profiles (where `profile = repo + paths + password`)
+- [ ] Allow working with non-S3 storages
+- [ ] Support Windows
+- [ ] Add pruning (like [here](https://pypi.org/project/runrestic/))
+
 ## How to build
 
 ```bash
