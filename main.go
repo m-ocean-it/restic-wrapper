@@ -14,6 +14,8 @@ func main() {
 	var mode string
 
 	switch len(os.Args) {
+	case 0:
+		panic("wtf") // first argument is always a name of the executable
 	case 1:
 		mode = "backup"
 	case 2:
@@ -23,7 +25,7 @@ func main() {
 		} else {
 			log.Fatalf("unknown arg: %s\n", arg)
 		}
-	case 3:
+	default:
 		log.Fatalln("too many args")
 	}
 
