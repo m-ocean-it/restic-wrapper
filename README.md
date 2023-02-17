@@ -3,6 +3,7 @@
 This script allows backing up multiple file paths (specified in a config file) at once to an S3-compatible storage using Restic.
 
 ## TODO
+- [ ] Add help message
 - [x] Allow working with multiple profiles (where `profile = repo + paths + password`)
     - *Currently, there's no way to specify a profile when running commands: the commands apply to all profiles at once.*
 - [ ] Allow working with non-S3 storages
@@ -17,7 +18,8 @@ go build .
 
 ## How to use
 
-Prepare `config.yaml` and `secrets.yaml`. (Examples are present in the repo.)
+- Prepare `config.yaml` and `secrets.yaml`. (Examples are present in the repo.)
+- `config.yaml` should be either placed inside `/etc/restic-wrapper` or linked to by the `RESTIC_WRAPPER_CONFIG_PATH` environment variable.
 
 Then run:
 ```bash
