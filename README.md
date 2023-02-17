@@ -9,6 +9,7 @@ This script allows backing up multiple file paths (specified in a config file) a
 - [ ] Allow working with non-S3 storages
 - [ ] Support Windows
 - [ ] Add pruning (like [here](https://pypi.org/project/runrestic/))
+- [ ] Clean up the output
 
 ## How to build
 
