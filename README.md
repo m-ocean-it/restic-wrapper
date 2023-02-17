@@ -3,6 +3,7 @@
 This script allows backing up multiple file paths (specified in a config file) at once to an S3-compatible storage using Restic.
 
 ## TODO
+- [ ] Allow ignoring certain file paths
 - [ ] Add help message
 - [x] Allow working with multiple profiles (where `profile = repo + paths + password`)
     - *Currently, there's no way to specify a profile when running commands: the commands apply to all profiles at once.*
