@@ -15,13 +15,23 @@ var DEFAULT_CONFIG_PATH = "/etc/restic-wrapper/config.yaml"
 var DEFAULT_SECRETS_PATH = "/etc/restic-wrapper/secrets.yaml"
 
 type config struct {
-	SecretsFilePath string `yaml:"SECRETS_FILE"`
+	Profiles map[string]profile
+}
 
-	ENDPOINT   string `yaml:"ENDPOINT"`
-	BUCKET     string `yaml:"BUCKET"`
-	BUCKET_DIR string `yaml:"BUCKET_DIR"`
+func (c config) validate() {
+	for _, prof := range c.Profiles {
+		prof.validate()
+	}
+}
 
-	BACKUP_PATHS []string `yaml:"BACKUP_PATHS"`
+type profile struct {
+	SecretsFilePath string `yaml:"secrets-file"`
+
+	Endpoint  string `yaml:"endpoint"`
+	Bucket    string `yaml:"bucket"`
+	BucketDir string `yaml:"bucket-dir"`
+
+	Sources []string `yaml:"sources"`
 }
 
 func Build() (config, error) {
@@ -35,7 +45,9 @@ func Build() (config, error) {
 	}
 
 	var conf config
-	data, err := os.ReadFile(config_file_path) // TODO: also, use env var
+
+	data, err := os.ReadFile(config_file_path)
+
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			err = fmt.Errorf("config file does not exist at: %s", config_file_path)
@@ -51,19 +63,19 @@ func Build() (config, error) {
 	return conf, err
 }
 
-func (c config) Url() string {
+func (c profile) Url() string {
 	return fmt.Sprintf("https://%s/%s/%s",
-		c.ENDPOINT,
-		c.BUCKET,
-		c.BUCKET_DIR)
+		c.Endpoint,
+		c.Bucket,
+		c.BucketDir)
 }
 
-func (c config) Secrets() secrets.Secrets {
+func (c profile) Secrets() secrets.Secrets {
 	return secrets.Build(c.SecretsFilePath)
 }
 
-func (c *config) validate() {
-	if len(c.BUCKET_DIR) == 0 {
+func (c *profile) validate() {
+	if len(c.BucketDir) == 0 {
 		log.Println("config: BUCKET_DIR empty, therefore using the bucket's root")
 	}
 
@@ -76,13 +88,13 @@ func (c *config) validate() {
 	{
 		err_msg := "config error"
 
-		if len(c.ENDPOINT) == 0 {
+		if len(c.Endpoint) == 0 {
 			log.Fatalf("%s: ENDPOINT empty\n", err_msg)
 		}
-		if len(c.BUCKET) == 0 {
+		if len(c.Bucket) == 0 {
 			log.Fatalf("%s: BUCKET empty\n", err_msg)
 		}
-		if len(c.BACKUP_PATHS) == 0 {
+		if len(c.Sources) == 0 {
 			log.Fatalf("%s: BACKUP_PATHS empty\n", err_msg)
 		}
 	}

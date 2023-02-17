@@ -42,42 +42,47 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	secr := conf.Secrets()
-	{
-		// Restic requires those environment variables for authenticating
-		// with an S3 storage-provider.
-		err = os.Setenv("AWS_ACCESS_KEY_ID", secr.Aws.KeyId)
+	for profile_name, prof := range conf.Profiles {
+		log.Println("profile: " + profile_name)
+
+		secr := prof.Secrets()
+		{
+			// Restic requires those environment variables for authenticating
+			// with an S3 storage-provider.
+			err = os.Setenv("AWS_ACCESS_KEY_ID", secr.Aws.KeyId)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			err = os.Setenv("AWS_SECRET_ACCESS_KEY", secr.Aws.Key)
+			if err != nil {
+				log.Fatalln(err)
+			}
+		}
+		err = os.Setenv("RESTIC_PASSWORD", secr.ResticPassword)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		err = os.Setenv("AWS_SECRET_ACCESS_KEY", secr.Aws.Key)
-		if err != nil {
-			log.Fatalln(err)
+
+		switch mode {
+
+		case "init":
+			init_repo(prof.Url())
+
+		case "backup":
+			err = backup_paths(prof.Url(), prof.Sources...)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			fmt.Println("You can use `restic-wrapper snapshots` to list snapshots")
+
+		case "snapshots":
+			err = list_snapshots(prof.Url())
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
-	err = os.Setenv("RESTIC_PASSWORD", secr.ResticPassword)
-	if err != nil {
-		log.Fatalln(err)
-	}
 
-	switch mode {
-
-	case "init":
-		init_repo(conf.Url())
-
-	case "backup":
-		err = backup_paths(conf.Url(), conf.BACKUP_PATHS...)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		fmt.Println("You can use `restic-wrapper snapshots` to list snapshots")
-
-	case "snapshots":
-		err = list_snapshots(conf.Url())
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
 }
 
 func init_repo(url string) {

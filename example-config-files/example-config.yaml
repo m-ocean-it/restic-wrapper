@@ -1,9 +1,16 @@
-SECRETS_FILE: "/home/username/.config/restic-wrapper.yaml" # allowed empty
-
-ENDPOINT: storage.yandexcloud.net
-BUCKET: "some-bucket-name"
-BUCKET_DIR: "" # allowed empty
-
-BACKUP_PATHS:
-  - "/home/username/Desktop"
-  - "/home/username/Documents"
+profiles:
+  work-profile:
+    endpoint: "storage.yandexcloud.net"
+    bucket: "some-bucket"
+    bucket-dir: ""
+    secrets-file: "/etc/restic-wrapper/work-secrets.yaml"
+    sources:
+      - "/home/user/Documents"
+  personal-profile:
+    endpoint: "s3.amazon.com"
+    bucket: "a-pretty-bucket"
+    bucket-dir: "path/within/bucket"
+    secrets-file: "/home/user/.config/personal-secrets.yaml"
+    sources:
+      - "/home/user/Desktop"
+      - "/home/user/Videos"
